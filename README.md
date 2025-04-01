@@ -165,6 +165,3 @@ The React frontend provides:
 - Access control for owners
 - Gas-optimized data structures
 
-## License
-
-MIT 
