@@ -172,6 +172,8 @@ function ListBook() {
       setCoverImagePreview('');
       setDailyPrice('');
       setDeposit('');
+      setPhone('');
+      setEmail('');
     } catch (err) {
       console.error('Error in listItem:', err);
       handleError(err);
