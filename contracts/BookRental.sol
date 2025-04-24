@@ -40,9 +40,7 @@ contract BookRental is ReentrancyGuard, Ownable {
         string memory _description,
         string memory _coverImage,
         uint256 _dailyPrice,
-        uint256 _deposit,
-        unit256 _phone,
-        string email
+        uint256 _deposit
     ) external {
         require(bytes(_title).length > 0, "Title cannot be empty");
         require(bytes(_author).length > 0, "Author cannot be empty");
