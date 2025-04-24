@@ -17,8 +17,6 @@ function ListBook() {
     const [coverImagePreview, setCoverImagePreview] = useState('');
     const [dailyPrice, setDailyPrice] = useState('');
     const [deposit, setDeposit] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
 
     // Notification states
     const [notification, setNotification] = useState({
@@ -172,8 +170,7 @@ function ListBook() {
             setCoverImagePreview('');
             setDailyPrice('');
             setDeposit('');
-            setPhone('');
-            setEmail('');
+
         } catch (err) {
             console.error('Error in listItem:', err);
             handleError(err);
@@ -341,40 +338,7 @@ function ListBook() {
                                         </Form.Text>
                                     </div>
                                 </Form.Group>
-                                <Form.Group className="mb-4">
-                                    <Form.Label>
-                                        <i className="bi bi-telephone me-2"></i>
-                                        Phone Number
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="tel"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        placeholder="Enter your phone number"
-                                        pattern="^[0-9+\-\s()]{6,15}$"
-                                        required
-                                        disabled={isSubmitting}
-                                        className="form-control-lg"
-                                    />
-                                </Form.Group>
-
-                                <Form.Group className="mb-4">
-                                    <Form.Label>
-                                        <i className="bi bi-envelope-at me-2"></i>
-                                        Email Address
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="Enter your email address"
-                                        required
-                                        disabled={isSubmitting}
-                                        className="form-control-lg"
-                                    />
-                                </Form.Group>
-
-
+                                
                                 <Form.Label>
                                     <i className="bi bi-currency-dollar me-2"></i>
                                     Price per Minute (ETH)
