@@ -17,6 +17,8 @@ function ListBook() {
   const [coverImagePreview, setCoverImagePreview] = useState('');
   const [dailyPrice, setDailyPrice] = useState('');
   const [deposit, setDeposit] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   
   // Notification states
   const [notification, setNotification] = useState({
