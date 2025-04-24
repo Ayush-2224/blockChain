@@ -339,79 +339,80 @@ function ListBook() {
                                     </div>
                                 </Form.Group>
                                 
-                                <Form.Label>
-                                    <i className="bi bi-currency-dollar me-2"></i>
-                                    Price per Minute (ETH)
-                                </Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    step="0.000001"
-                                    value={dailyPrice}
-                                    onChange={(e) => setDailyPrice(e.target.value)}
-                                    placeholder="Enter price per minute"
-                                    required
-                                    disabled={isSubmitting}
-                                    className="form-control-lg"
-                                />
-                                <Form.Text className="text-muted">
-                                    <i className="bi bi-info-circle me-1"></i>
-                                    Recommended: 0.0001 ETH per minute for testing
-                                </Form.Text>
-                            </Form.Group>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>
+                                        <i className="bi bi-currency-dollar me-2"></i>
+                                        Price per Minute (ETH)
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        step="0.000001"
+                                        value={dailyPrice}
+                                        onChange={(e) => setDailyPrice(e.target.value)}
+                                        placeholder="Enter price per minute"
+                                        required
+                                        disabled={isSubmitting}
+                                        className="form-control-lg"
+                                    />
+                                    <Form.Text className="text-muted">
+                                        <i className="bi bi-info-circle me-1"></i>
+                                        Recommended: 0.0001 ETH per minute for testing
+                                    </Form.Text>
+                                </Form.Group>
 
-                            <Form.Group className="mb-4">
-                                <Form.Label>
-                                    <i className="bi bi-shield-lock me-2"></i>
-                                    Deposit (ETH)
-                                </Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    step="0.000001"
-                                    value={deposit}
-                                    onChange={(e) => setDeposit(e.target.value)}
-                                    placeholder="Enter deposit amount"
-                                    required
-                                    disabled={isSubmitting}
-                                    className="form-control-lg"
-                                />
-                                <Form.Text className="text-muted">
-                                    <i className="bi bi-info-circle me-1"></i>
-                                    Deposit should be greater than or equal to the price per minute
-                                </Form.Text>
-                            </Form.Group>
+                                <Form.Group className="mb-4">
+                                    <Form.Label>
+                                        <i className="bi bi-shield-lock me-2"></i>
+                                        Deposit (ETH)
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="number"
+                                        step="0.000001"
+                                        value={deposit}
+                                        onChange={(e) => setDeposit(e.target.value)}
+                                        placeholder="Enter deposit amount"
+                                        required
+                                        disabled={isSubmitting}
+                                        className="form-control-lg"
+                                    />
+                                    <Form.Text className="text-muted">
+                                        <i className="bi bi-info-circle me-1"></i>
+                                        Deposit should be greater than or equal to the price per minute
+                                    </Form.Text>
+                                </Form.Group>
 
-                            <Button
-                                variant="primary"
-                                type="submit"
-                                disabled={isSubmitting || isUploading}
-                                className="w-100 py-3 animate__animated animate__pulse"
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <Spinner
-                                            as="span"
-                                            animation="border"
-                                            size="sm"
-                                            role="status"
-                                            aria-hidden="true"
-                                            className="me-2"
-                                        />
-                                        Listing Book...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="bi bi-plus-circle me-2"></i>
-                                        List Book
-                                    </>
-                                )}
-                            </Button>
-                        </Form>
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Row>
-    </Container >
-  );
+                                <Button
+                                    variant="primary"
+                                    type="submit"
+                                    disabled={isSubmitting || isUploading}
+                                    className="w-100 py-3 animate__animated animate__pulse"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Spinner
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                                className="me-2"
+                                            />
+                                            Listing Book...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="bi bi-plus-circle me-2"></i>
+                                            List Book
+                                        </>
+                                    )}
+                                </Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
+    );
 }
 
 export default ListBook; 
