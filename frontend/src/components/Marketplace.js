@@ -9,7 +9,8 @@ import { resolveIPFSUrl } from '../utils/pinataConfig';
 
 function Marketplace() {
   const { account, library, chainId } = useWeb3React();
-  const [books, setBooks] = useState([]);
+  const [availableBooks, setAvailableBooks] = useState([]);
+  const [rentedBooks, setRentedBooks] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(true);
@@ -69,36 +70,47 @@ function Marketplace() {
       const bookCount = await contract.getBookCount();
       
       if (bookCount.toNumber() === 0) {
-        setBooks([]);
+        setAvailableBooks([]);
+        setRentedBooks([]);
         setLoading(false);
         return;
       }
 
-      const booksData = [];
+      const availableBooksData = [];
+      const rentedBooksData = [];
+      
       for (let i = 0; i < bookCount; i++) {
         try {
           const book = await contract.getBook(i);
+          const bookData = {
+            id: i,
+            title: book.title,
+            author: book.author,
+            description: book.description,
+            coverImage: book.coverImage,
+            dailyPrice: ethers.utils.formatEther(book.dailyPrice),
+            deposit: ethers.utils.formatEther(book.deposit),
+            owner: book.owner,
+            renter: book.renter,
+            rentalStartTime: book.rentalStartTime.toNumber() ? new Date(book.rentalStartTime.toNumber() * 1000) : null,
+            isAvailable: book.isAvailable
+          };
+          
           if (book.isAvailable) {
-            console.log(`Book ${i} cover image:`, book.coverImage);
-            
-            booksData.push({
-              id: i,
-              title: book.title,
-              author: book.author,
-              description: book.description,
-              coverImage: book.coverImage,
-              dailyPrice: ethers.utils.formatEther(book.dailyPrice),
-              deposit: ethers.utils.formatEther(book.deposit),
-              owner: book.owner,
-            });
+            availableBooksData.push(bookData);
+          } else {
+            rentedBooksData.push(bookData);
           }
         } catch (err) {
           console.error(`Error loading book ${i}:`, err);
         }
       }
       
-      console.log("Loaded books data:", booksData);
-      setBooks(booksData);
+      console.log("Loaded available books:", availableBooksData);
+      console.log("Loaded rented books:", rentedBooksData);
+      
+      setAvailableBooks(availableBooksData);
+      setRentedBooks(rentedBooksData);
     } catch (err) {
       console.error('Error in loadBooks:', err);
       handleError(err);
@@ -238,8 +250,8 @@ function Marketplace() {
     );
   }
 
-  const renderBooks = () => {
-    if (books.length === 0) {
+  const renderAvailableBooks = () => {
+    if (availableBooks.length === 0) {
       return (
         <div className="empty-state animate__animated animate__fadeIn">
           <i className="bi bi-book text-muted"></i>
@@ -251,7 +263,7 @@ function Marketplace() {
 
     return (
       <Row xs={1} md={2} lg={3} className="g-4">
-        {books.map((book) => (
+        {availableBooks.map((book) => (
           <Col key={book.id}>
             <Card className="h-100 book-card shadow-sm animate__animated animate__fadeIn">
               <Card.Header className="bg-primary text-white">
@@ -333,22 +345,90 @@ function Marketplace() {
     );
   };
 
+  const renderRentedBooks = () => {
+    if (rentedBooks.length === 0) {
+      return (
+        <div className="empty-state animate__animated animate__fadeIn">
+          <i className="bi bi-hourglass text-muted"></i>
+          <h3>No Rented Books</h3>
+          <p>There are no books currently rented by other users.</p>
+        </div>
+      );
+    }
+
+    return (
+      <Row xs={1} md={2} lg={3} className="g-4">
+        {rentedBooks.map((book) => (
+          <Col key={book.id}>
+            <Card className="h-100 book-card shadow-sm animate__animated animate__fadeIn">
+              <Card.Header className="bg-secondary text-white">
+                <h5 className="mb-0">
+                  <i className="bi bi-hourglass-split me-2"></i>
+                  {book.title}
+                </h5>
+                <Badge bg="warning" text="dark" className="ms-2 mt-1">Currently Rented</Badge>
+              </Card.Header>
+              {book.coverImage && (
+                <div className="book-cover-container">
+                  <img 
+                    src={resolveIPFSUrl(book.coverImage)} 
+                    alt={`Cover for ${book.title}`} 
+                    className="img-fluid book-cover-image w-100"
+                    style={{ 
+                      height: '250px', 
+                      objectFit: 'cover',
+                      backgroundColor: '#f8f9fa',
+                      border: '1px solid #dee2e6'
+                    }}
+                    onError={(e) => {
+                      console.error("Failed to load image:", book.coverImage);
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/500x700?text=No+Image';
+                    }}
+                  />
+                </div>
+              )}
+              <Card.Body>
+                <Card.Text className="book-author mb-3">
+                  <strong><i className="bi bi-person me-2"></i>Author:</strong> {book.author}
+                </Card.Text>
+                <div className="book-description mb-3">
+                  <strong><i className="bi bi-card-text me-2"></i>Description:</strong> 
+                  <p className="mt-2">{book.description || "No description provided."}</p>
+                </div>
+                <Card.Text>
+                  <strong><i className="bi bi-currency-dollar me-2"></i>Price:</strong> {book.dailyPrice} ETH per minute
+                </Card.Text>
+                <Card.Text>
+                  <strong><i className="bi bi-shield-lock me-2"></i>Deposit:</strong> {book.deposit} ETH
+                </Card.Text>
+                <Card.Text>
+                  <strong><i className="bi bi-calendar me-2"></i>Rented since:</strong> {book.rentalStartTime ? book.rentalStartTime.toLocaleString() : 'Unknown'}
+                </Card.Text>
+                <Button
+                  variant="secondary"
+                  className="w-100 mt-3"
+                  disabled
+                >
+                  <i className="bi bi-hourglass me-2"></i>
+                  Not Available
+                </Button>
+              </Card.Body>
+              <Card.Footer className="text-muted">
+                <small>
+                  <i className="bi bi-person-circle me-1"></i>
+                  Listed by: {book.owner.substring(0, 6)}...{book.owner.substring(38)}
+                </small>
+              </Card.Footer>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    );
+  };
+
   return (
     <Container>
-      <h2 className="mb-4">Available Books</h2>
-      {error && (
-        <Alert variant="danger" className="mb-4">
-          <i className="bi bi-exclamation-triangle me-2"></i>
-          {error}
-        </Alert>
-      )}
-      {success && (
-        <Alert variant="success" className="mb-4">
-          <i className="bi bi-check-circle me-2"></i>
-          {success}
-        </Alert>
-      )}
-
       {/* Notifications */}
       <Notification
         show={notification.show}
@@ -362,10 +442,20 @@ function Marketplace() {
           <Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
-          <p className="mt-3">Loading available books...</p>
+          <p className="mt-3">Loading marketplace...</p>
         </div>
       ) : (
-        renderBooks()
+        <>
+          <div className="mb-5">
+            <h2 className="mb-4">Available Books</h2>
+            {renderAvailableBooks()}
+          </div>
+          
+          <div>
+            <h2 className="mb-4">Rented Books</h2>
+            {renderRentedBooks()}
+          </div>
+        </>
       )}
     </Container>
   );
